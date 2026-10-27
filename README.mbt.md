@@ -8,7 +8,7 @@ claimed.
 ## What it does
 
 `parse_csv` handles a decoded UTF-8 BOM, quoted commas, doubled quotes, CRLF, and newlines inside
-quoted fields. It reports malformed quote placement. `audit_csv` then reports
+quoted fields. It reports malformed quote placement with a physical line number. `audit_csv` then reports
 empty or duplicate column names, row-width mismatches, repeated values in a
 chosen key column, missing keys, and numeric-looking keys with leading zeroes. Leading-zero
 findings are warnings: the library does not claim that data has already been

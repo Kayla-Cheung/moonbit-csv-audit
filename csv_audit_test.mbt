@@ -67,3 +67,11 @@ test "missing keys have a dedicated warning" {
   assert_eq(issues[0], "Row 2 has an empty key")
   assert_eq(issues[1], "Row 3 has an empty key")
 }
+
+///|
+test "parse errors identify their physical line" {
+  match @moonbit-csv-audit.parse_csv("id\n1\n\"bad") {
+    Err(message) => assert_eq(message, "Line 3: unclosed quoted field")
+    Ok(_) => fail("unclosed quote accepted")
+  }
+}

@@ -8,10 +8,15 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
   let mut quoted = false
   let mut after_quote = false
   let mut at_field_start = true
+  let mut line = 1
   // UTF-8 BOM arrives as U+FEFF once the caller decodes the source.
   let mut i = if chars.length() > 0 && chars[0] == '\uFEFF' { 1 } else { 0 }
   while i < chars.length() {
     let c = chars[i]
+    if c == '\n' ||
+      (c == '\r' && (i + 1 >= chars.length() || chars[i + 1] != '\n')) {
+      line = line + 1
+    }
     if quoted {
       if c == '"' {
         if i + 1 < chars.length() && chars[i + 1] == '"' {
@@ -41,7 +46,7 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
       at_field_start = false
     } else if c == '"' || after_quote {
       return Err(
-        "Unexpected character after closing quote or quote in unquoted field",
+        "Line \{line}: unexpected character after closing quote or quote in unquoted field",
       )
     } else {
       field.write_char(c)
@@ -50,7 +55,7 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
     i = i + 1
   }
   if quoted {
-    return Err("Unclosed quoted field")
+    return Err("Line \{line}: unclosed quoted field")
   }
   if chars.length() > 0 &&
     chars[chars.length() - 1] != '\n' &&
