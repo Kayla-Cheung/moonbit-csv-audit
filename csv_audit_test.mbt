@@ -89,3 +89,11 @@ test "sixteen-digit key is flagged for spreadsheet precision" {
   assert_eq(issues.length(), 1)
   assert_eq(issues[0], "Row 2 key exceeds 15 digits: 1234567890123456")
 }
+
+///|
+test "formula-like values are located without modifying CSV" {
+  let issues = @moonbit-csv-audit.audit_csv("id,note\n7,=1+1\n8,＠SUM(1)\n", 0)
+  assert_eq(issues.length(), 2)
+  assert_eq(issues[0], "Row 2 column 2 may be interpreted as a formula")
+  assert_eq(issues[1], "Row 3 column 2 may be interpreted as a formula")
+}

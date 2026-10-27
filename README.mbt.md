@@ -16,6 +16,11 @@ These warnings reflect [Microsoft's documented Excel conversion behavior](https:
 findings are warnings: the library does not claim that data has already been
 corrupted. It does not modify the input.
 
+It also locates cells starting with common spreadsheet formula trigger
+characters, following [OWASP's CSV injection guidance](https://community.owasp.org/attacks/CSV_Injection).
+These are conservative warnings, including possible false positives such as
+negative numbers; the library does not sanitize or execute cell contents.
+
 The initial scope assumes an already-decoded Unicode string. Encoding checks,
 formula injection screening, huge-file streaming, and full spreadsheet import
 simulation are outside this version.

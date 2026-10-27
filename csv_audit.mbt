@@ -97,6 +97,13 @@ pub fn audit_csv(source : String, key_column : Int32) -> Array[String] {
               "Row \{r + 1} has \{row.length()} fields; expected \{header.length()}",
             )
           }
+          for c in 0..<row.length() {
+            if may_be_formula(row[c]) {
+              issues.push(
+                "Row \{r + 1} column \{c + 1} may be interpreted as a formula",
+              )
+            }
+          }
           if key_column >= 0 && key_column < row.length() {
             let key = row[key_column]
             if key == "" {
@@ -163,4 +170,24 @@ fn numeric_canonical(value : String) -> String? {
     i = i + 1
   }
   Some(builder.to_string())
+}
+
+///|
+fn may_be_formula(value : String) -> Bool {
+  let chars : Array[Char] = [..value]
+  if chars.length() == 0 {
+    return false
+  }
+  let c = chars[0]
+  c == '=' ||
+  c == '+' ||
+  c == '-' ||
+  c == '@' ||
+  c == '\t' ||
+  c == '\r' ||
+  c == '\n' ||
+  c == '＝' ||
+  c == '＋' ||
+  c == '－' ||
+  c == '＠'
 }
