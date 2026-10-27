@@ -75,3 +75,10 @@ test "parse errors identify their physical line" {
     Ok(_) => fail("unclosed quote accepted")
   }
 }
+
+///|
+test "different identifiers that coerce to one number are flagged" {
+  let issues = @moonbit-csv-audit.audit_csv("sku,name\n0007,A\n7,B\n", 0)
+  assert_eq(issues.length(), 2)
+  assert_eq(issues[1], "Row 3 key may collide numerically with row 2: 7")
+}

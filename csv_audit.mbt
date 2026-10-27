@@ -113,6 +113,14 @@ pub fn audit_csv(source : String, key_column : Int32) -> Array[String] {
                   issues.push(
                     "Row \{r + 1} repeats key from row \{earlier + 1}: \{key}",
                   )
+                } else if key_column < rows[earlier].length() &&
+                  key != rows[earlier][key_column] &&
+                  numeric_canonical(key) != None &&
+                  numeric_canonical(key) ==
+                  numeric_canonical(rows[earlier][key_column]) {
+                  issues.push(
+                    "Row \{r + 1} key may collide numerically with row \{earlier + 1}: \{key}",
+                  )
                 }
               }
             }
@@ -134,4 +142,22 @@ fn is_ascii_digits(value : String) -> Bool {
     }
   }
   true
+}
+
+///|
+fn numeric_canonical(value : String) -> String? {
+  if !is_ascii_digits(value) {
+    return None
+  }
+  let chars : Array[Char] = [..value]
+  let mut i = 0
+  while i + 1 < chars.length() && chars[i] == '0' {
+    i = i + 1
+  }
+  let builder = StringBuilder()
+  while i < chars.length() {
+    builder.write_char(chars[i])
+    i = i + 1
+  }
+  Some(builder.to_string())
 }
