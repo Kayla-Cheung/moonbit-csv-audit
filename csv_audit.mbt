@@ -4,7 +4,7 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
   let chars : Array[Char] = [..source]
   let rows : Array[Array[String]] = []
   let mut row : Array[String] = []
-  let mut field = ""
+  let mut field = StringBuilder()
   let mut quoted = false
   let mut after_quote = false
   let mut at_field_start = true
@@ -15,18 +15,18 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
     if quoted {
       if c == '"' {
         if i + 1 < chars.length() && chars[i + 1] == '"' {
-          field = [..field, '"']
+          field.write_char('"')
           i = i + 1
         } else {
           quoted = false
           after_quote = true
         }
       } else {
-        field = [..field, c]
+        field.write_char(c)
       }
     } else if c == ',' || c == '\n' || c == '\r' {
-      row.push(field)
-      field = ""
+      row.push(field.to_string())
+      field = StringBuilder()
       after_quote = false
       at_field_start = true
       if c == '\n' || c == '\r' {
@@ -44,7 +44,7 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
         "Unexpected character after closing quote or quote in unquoted field",
       )
     } else {
-      field = [..field, c]
+      field.write_char(c)
       at_field_start = false
     }
     i = i + 1
@@ -55,7 +55,7 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
   if chars.length() > 0 &&
     chars[chars.length() - 1] != '\n' &&
     chars[chars.length() - 1] != '\r' {
-    row.push(field)
+    row.push(field.to_string())
     rows.push(row)
   }
   Ok(rows)
