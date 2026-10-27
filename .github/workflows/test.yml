@@ -1,0 +1,20 @@
+name: MoonBit test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hustcer/setup-moonbit@v1.22
+      - name: Check and test
+        run: |
+          moon check -d
+          moon test -d
+          moon build
