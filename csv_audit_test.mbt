@@ -59,3 +59,11 @@ test "decoded UTF-8 BOM is not part of the first header" {
     Err(_) => fail("BOM-prefixed CSV rejected")
   }
 }
+
+///|
+test "missing keys have a dedicated warning" {
+  let issues = @moonbit-csv-audit.audit_csv("id,name\n,A\n,B\n", 0)
+  assert_eq(issues.length(), 2)
+  assert_eq(issues[0], "Row 2 has an empty key")
+  assert_eq(issues[1], "Row 3 has an empty key")
+}

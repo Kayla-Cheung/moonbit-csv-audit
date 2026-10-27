@@ -94,15 +94,21 @@ pub fn audit_csv(source : String, key_column : Int32) -> Array[String] {
           }
           if key_column >= 0 && key_column < row.length() {
             let key = row[key_column]
-            if key.length() > 1 && key.has_prefix("0") && is_ascii_digits(key) {
+            if key == "" {
+              issues.push("Row \{r + 1} has an empty key")
+            } else if key.length() > 1 &&
+              key.has_prefix("0") &&
+              is_ascii_digits(key) {
               issues.push("Row \{r + 1} key has leading zeros: \{key}")
             }
-            for earlier in 1..<r {
-              if key_column < rows[earlier].length() &&
-                key == rows[earlier][key_column] {
-                issues.push(
-                  "Row \{r + 1} repeats key from row \{earlier + 1}: \{key}",
-                )
+            if key != "" {
+              for earlier in 1..<r {
+                if key_column < rows[earlier].length() &&
+                  key == rows[earlier][key_column] {
+                  issues.push(
+                    "Row \{r + 1} repeats key from row \{earlier + 1}: \{key}",
+                  )
+                }
               }
             }
           }
