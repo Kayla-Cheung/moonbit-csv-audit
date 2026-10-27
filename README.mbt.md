@@ -21,6 +21,10 @@ characters, following [OWASP's CSV injection guidance](https://community.owasp.o
 These are conservative warnings, including possible false positives such as
 negative numbers; the library does not sanitize or execute cell contents.
 
+Call `audit_csv_by_header(source, "sku")` when the identifier column is known
+by name. It rejects missing or ambiguous header names instead of silently
+choosing a numeric column index.
+
 The initial scope assumes an already-decoded Unicode string. Encoding checks,
 formula injection screening, huge-file streaming, and full spreadsheet import
 simulation are outside this version.

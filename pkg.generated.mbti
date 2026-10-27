@@ -1,8 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "username/moonbit-csv-audit"
+package "Kayla-Cheung/moonbit-csv-audit"
 
 // Values
 pub fn audit_csv(String, Int32) -> Array[String]
+
+pub fn audit_csv_by_header(String, String) -> Array[String]
 
 pub fn parse_csv(String) -> Result[Array[Array[String]], String]
 

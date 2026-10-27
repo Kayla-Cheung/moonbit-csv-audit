@@ -142,6 +142,36 @@ pub fn audit_csv(source : String, key_column : Int32) -> Array[String] {
 }
 
 ///|
+/// Locate the key column by header name, avoiding fragile numeric indexes.
+/// A missing or ambiguous header is an explicit finding.
+pub fn audit_csv_by_header(
+  source : String,
+  key_header : String,
+) -> Array[String] {
+  match parse_csv(source) {
+    Err(message) => [message]
+    Ok(rows) => {
+      if rows.length() == 0 {
+        return ["CSV is empty"]
+      }
+      let mut found = -1
+      for i in 0..<rows[0].length() {
+        if rows[0][i] == key_header {
+          if found >= 0 {
+            return ["Key header is ambiguous: \{key_header}"]
+          }
+          found = i
+        }
+      }
+      if found < 0 {
+        return ["Key header not found: \{key_header}"]
+      }
+      audit_csv(source, found)
+    }
+  }
+}
+
+///|
 fn is_ascii_digits(value : String) -> Bool {
   if value == "" {
     return false

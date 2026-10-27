@@ -97,3 +97,20 @@ test "formula-like values are located without modifying CSV" {
   assert_eq(issues[0], "Row 2 column 2 may be interpreted as a formula")
   assert_eq(issues[1], "Row 3 column 2 may be interpreted as a formula")
 }
+
+///|
+test "audit can locate a uniquely named key column" {
+  let issues = @moonbit-csv-audit.audit_csv_by_header(
+    "name,sku\nA,0007\nB,0007\n", "sku",
+  )
+  assert_eq(issues.length(), 3)
+  assert_eq(issues[2], "Row 3 repeats key from row 2: 0007")
+  assert_eq(
+    @moonbit-csv-audit.audit_csv_by_header("name\nA\n", "sku")[0],
+    "Key header not found: sku",
+  )
+  assert_eq(
+    @moonbit-csv-audit.audit_csv_by_header("sku,sku\n1,2\n", "sku")[0],
+    "Key header is ambiguous: sku",
+  )
+}
