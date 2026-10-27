@@ -1,0 +1,5 @@
+import {
+  "Kayla-Cheung/moonbit-csv-audit" @lib,
+}
+
+pkgtype(kind: "executable")

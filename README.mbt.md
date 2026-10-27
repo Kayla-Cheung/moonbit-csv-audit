@@ -1,0 +1,40 @@
+# MoonBit CSV Audit
+
+An original, dependency-free MoonBit library for checking CSV structure and
+identifier integrity before a spreadsheet import. It is a prototype for the
+October 2026 MoonBit hackathon; no acceptance, award, or customer demand is
+claimed.
+
+## What it does
+
+`parse_csv` handles quoted commas, doubled quotes, CRLF, and newlines inside
+quoted fields. It reports malformed quote placement. `audit_csv` then reports
+empty or duplicate column names, row-width mismatches, repeated values in a
+chosen key column, and numeric-looking keys with leading zeroes. Leading-zero
+findings are warnings: the library does not claim that data has already been
+corrupted. It does not modify the input.
+
+The initial scope assumes an already-decoded Unicode string. Encoding checks,
+formula injection screening, huge-file streaming, and full spreadsheet import
+simulation are outside this version.
+
+## Reproduce
+
+With the MoonBit toolchain installed, run from this directory:
+
+```sh
+moon test
+moon run cmd/main
+```
+
+The runnable example prints three warnings for an invented two-row CSV:
+
+```text
+Row 2 key has leading zeros: 0007
+Row 3 key has leading zeros: 0007
+Row 3 repeats key from row 2: 0007
+```
+
+The module coordinate uses the existing authorized GitHub account name;
+Mooncakes ownership has not been verified and no package has been published.
+Apache-2.0 license.
