@@ -82,3 +82,10 @@ test "different identifiers that coerce to one number are flagged" {
   assert_eq(issues.length(), 2)
   assert_eq(issues[1], "Row 3 key may collide numerically with row 2: 7")
 }
+
+///|
+test "sixteen-digit key is flagged for spreadsheet precision" {
+  let issues = @moonbit-csv-audit.audit_csv("id\n1234567890123456\n", 0)
+  assert_eq(issues.length(), 1)
+  assert_eq(issues[0], "Row 2 key exceeds 15 digits: 1234567890123456")
+}

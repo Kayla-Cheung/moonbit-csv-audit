@@ -106,6 +106,9 @@ pub fn audit_csv(source : String, key_column : Int32) -> Array[String] {
               is_ascii_digits(key) {
               issues.push("Row \{r + 1} key has leading zeros: \{key}")
             }
+            if key.length() > 15 && is_ascii_digits(key) {
+              issues.push("Row \{r + 1} key exceeds 15 digits: \{key}")
+            }
             if key != "" {
               for earlier in 1..<r {
                 if key_column < rows[earlier].length() &&

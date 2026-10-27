@@ -11,7 +11,8 @@ claimed.
 quoted fields. It reports malformed quote placement with a physical line number. `audit_csv` then reports
 empty or duplicate column names, row-width mismatches, repeated values in a
 chosen key column, missing keys, numeric-looking keys with leading zeroes, and distinct keys
-that collapse to the same number. Leading-zero
+that collapse to the same number, plus digit-only keys longer than 15 digits.
+These warnings reflect [Microsoft's documented Excel conversion behavior](https://support.microsoft.com/en-us/excel/keeping-leading-zeros-and-large-numbers). Leading-zero
 findings are warnings: the library does not claim that data has already been
 corrupted. It does not modify the input.
 
