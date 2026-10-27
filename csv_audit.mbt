@@ -8,7 +8,8 @@ pub fn parse_csv(source : String) -> Result[Array[Array[String]], String] {
   let mut quoted = false
   let mut after_quote = false
   let mut at_field_start = true
-  let mut i = 0
+  // UTF-8 BOM arrives as U+FEFF once the caller decodes the source.
+  let mut i = if chars.length() > 0 && chars[0] == '\uFEFF' { 1 } else { 0 }
   while i < chars.length() {
     let c = chars[i]
     if quoted {

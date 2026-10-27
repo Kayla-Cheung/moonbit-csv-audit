@@ -51,3 +51,11 @@ test "trailing junk after quote is rejected" {
     Ok(_) => fail("invalid CSV accepted")
   }
 }
+
+///|
+test "decoded UTF-8 BOM is not part of the first header" {
+  match @moonbit-csv-audit.parse_csv("\uFEFFid,name\n7,月兔\n") {
+    Ok(rows) => assert_eq(rows[0][0], "id")
+    Err(_) => fail("BOM-prefixed CSV rejected")
+  }
+}
