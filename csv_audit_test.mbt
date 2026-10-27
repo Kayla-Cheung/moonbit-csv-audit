@@ -114,3 +114,11 @@ test "audit can locate a uniquely named key column" {
     "Key header is ambiguous: sku",
   )
 }
+
+///|
+test "repeated keys point to the first occurrence" {
+  let issues = @moonbit-csv-audit.audit_csv("sku\nA\nA\nA\n", 0)
+  assert_eq(issues.length(), 2)
+  assert_eq(issues[0], "Row 3 repeats key from row 2: A")
+  assert_eq(issues[1], "Row 4 repeats key from row 2: A")
+}

@@ -90,6 +90,8 @@ pub fn audit_csv(source : String, key_column : Int32) -> Array[String] {
         if key_column < 0 || key_column >= header.length() {
           issues.push("Key column is outside the header")
         }
+        let seen_exact : Map[String, Int32] = Map([])
+        let seen_numeric : Map[String, (String, Int32)] = Map([])
         for r in 1..<rows.length() {
           let row = rows[r]
           if row.length() != header.length() {
@@ -117,21 +119,25 @@ pub fn audit_csv(source : String, key_column : Int32) -> Array[String] {
               issues.push("Row \{r + 1} key exceeds 15 digits: \{key}")
             }
             if key != "" {
-              for earlier in 1..<r {
-                if key_column < rows[earlier].length() &&
-                  key == rows[earlier][key_column] {
+              match seen_exact.get(key) {
+                Some(earlier) =>
                   issues.push(
                     "Row \{r + 1} repeats key from row \{earlier + 1}: \{key}",
                   )
-                } else if key_column < rows[earlier].length() &&
-                  key != rows[earlier][key_column] &&
-                  numeric_canonical(key) != None &&
-                  numeric_canonical(key) ==
-                  numeric_canonical(rows[earlier][key_column]) {
-                  issues.push(
-                    "Row \{r + 1} key may collide numerically with row \{earlier + 1}: \{key}",
-                  )
-                }
+                None => seen_exact.set(key, r)
+              }
+              match numeric_canonical(key) {
+                Some(canonical) =>
+                  match seen_numeric.get(canonical) {
+                    Some((original, earlier)) =>
+                      if original != key {
+                        issues.push(
+                          "Row \{r + 1} key may collide numerically with row \{earlier + 1}: \{key}",
+                        )
+                      }
+                    None => seen_numeric.set(canonical, (key, r))
+                  }
+                None => ()
               }
             }
           }
